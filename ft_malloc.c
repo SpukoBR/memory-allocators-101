@@ -1,21 +1,41 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ft_malloc.c                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: peda-cos <peda-cos@student.42sp.org.br>    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/27 15:36:18 by peda-cos          #+#    #+#             */
-/*   Updated: 2024/09/27 15:36:40 by peda-cos         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
+#include "memalloc.h"
 
-void	*malloc(size_t size)
+t_header		*g_head = NULL;
+t_header		*g_tail = NULL;
+pthread_mutex_t	g_malloc_lock = PTHREAD_MUTEX_INITIALIZER;
+
+void	*ft_malloc(size_t size)
 {
-	void	*block;
+	size_t		total_size;
+	void		*block;
+	t_header	*header;
 
-	block = sbrk(size);
-	if (block == (void *)-1)
+	if (!size)
 		return (NULL);
-	return (block);
+	pthread_mutex_lock(&g_malloc_lock);
+	header = get_free_block(size);
+	if (header)
+	{
+		header->s.s_is_free = 0;
+		pthread_mutex_unlock(&g_malloc_lock);
+		return ((void *)(header + 1));
+	}
+	total_size = sizeof(t_header) + size;
+	block = sbrk(total_size);
+	if (block == (void *)-1)
+	{
+		pthread_mutex_unlock(&g_malloc_lock);
+		return (NULL);
+	}
+	header = block;
+	header->s.s_size = size;
+	header->s.s_is_free = 0;
+	header->s.s_next = NULL;
+	if (!g_head)
+		g_head = header;
+	if (g_tail)
+		g_tail->s.s_next = header;
+	g_tail = header;
+	pthread_mutex_unlock(&g_malloc_lock);
+	return ((void *)(header + 1));
 }
