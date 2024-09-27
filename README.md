@@ -52,6 +52,22 @@ Libera o bloco de memória apontado por `block`. Marca o bloco como livre e, se 
 void free(void *block);
 ```
 
+## Implementação
+
+Os arquivos de código são organizados da seguinte forma:
+
+- **`ft_malloc.c`**: Contém a implementação da função `ft_malloc()`, que aloca memória e gerencia a lista de blocos livres.
+- **`ft_free.c`**: Contém a implementação da função `ft_free()`, que libera um bloco de memória e pode reduzir o tamanho do heap se o bloco liberado estiver no final.
+- **`ft_calloc.c`**: Contém a implementação da função `ft_calloc()`, que aloca memória e inicializa todos os bytes com zero.
+- **`ft_realloc.c`**: Contém a implementação da função `ft_realloc()`, que altera o tamanho do bloco de memória existente e copia os dados.
+
+### Funções Utilizadas
+
+- **`ft_malloc(size_t size)`**: Aloca um bloco de memória do tamanho especificado.
+- **`ft_free(void *block)`**: Libera o bloco de memória especificado.
+- **`ft_calloc(size_t num, size_t nsize)`**: Aloca memória para um array e inicializa todos os bytes com zero.
+- **`ft_realloc(void *block, size_t size)`**: Redimensiona um bloco de memória existente.
+
 ## Compilando e Usando o Alocador
 
 Para compilar o alocador de memória e usá-lo como uma biblioteca compartilhada:
@@ -59,7 +75,7 @@ Para compilar o alocador de memória e usá-lo como uma biblioteca compartilhada
 1. **Compile o Alocador:**
 
     ```
-    gcc -o memalloc.so -fPIC -shared memalloc.c
+    make
     ```
 
 2. **Pré-carregue a Biblioteca:**
@@ -78,7 +94,7 @@ Para compilar o alocador de memória e usá-lo como uma biblioteca compartilhada
 
 ## Depuração
 
-Para depuração, você pode imprimir mensagens de depuração nas funções `malloc()`, `free()`, `calloc()` e `realloc()` para rastrear sua execução.
+Para depuração, você pode imprimir mensagens de depuração nas funções `malloc()`, `free()`, `calloc()` e `realloc()` para rastrear sua execução e verificar o comportamento do alocador.
 
 ## Licença
 
